@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_mcd/colors.dart';
+import 'package:flutter_app_mcd/supplement/cut_corners_border.dart';
 
 import 'home_screen.dart';
 
@@ -10,18 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
+      theme: _buildShrineTheme(),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -30,15 +21,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -46,27 +28,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
         title: Text('123'),
@@ -81,14 +44,30 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          TextField(
-            decoration: InputDecoration(filled: true, labelText: 'Username'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: AccentColorOverride(
+              color: kShrineBrown900,
+              child: TextField(
+                decoration: InputDecoration(filled: false, labelText: 'Username'),
+              ),
+            ),
           ),
           SizedBox(
             height: 12.0,
           ),
-          TextField(
-            decoration: InputDecoration(filled: true, labelText: 'Password'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Theme(
+              data: Theme.of(context).copyWith(accentColor: kShrineBrown900, brightness: Brightness.dark),
+              child: TextField(
+                decoration: InputDecoration(
+                  filled: false,
+                  labelText: 'Password',
+                ),
+                obscureText: true,
+              ),
+            ),
           ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
@@ -101,9 +80,13 @@ class _MyHomePageState extends State<MyHomePage> {
 //              ),
               RaisedButton(
                 child: Text('Next'),
+                elevation: 16.0,
+                shape: BeveledRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(7.0))
+                ),
                 onPressed: () {
                   debugPrint('Next');
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => HomeScreen(),
@@ -117,4 +100,53 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+}
+
+class AccentColorOverride extends StatelessWidget {
+  const AccentColorOverride({Key key, this.color, this.child})
+      : super(key: key);
+
+  final Color color;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+        data: Theme.of(context)
+            .copyWith(accentColor: color, brightness: Brightness.dark),
+        child: child);
+  }
+}
+
+ThemeData _buildShrineTheme() {
+  final ThemeData base = ThemeData.light();
+  return base.copyWith(
+      accentColor: kShrineBrown900,
+      primaryColor: kShrinePink100,
+      buttonTheme: base.buttonTheme.copyWith(
+          buttonColor: kShrinePink100, textTheme: ButtonTextTheme.normal),
+      scaffoldBackgroundColor: kShrineBackgroundWhite,
+      cardColor: kShrineBackgroundWhite,
+      textSelectionColor: kShrinePink100,
+      errorColor: kShrineErrorRed,
+      textTheme: _buildShrineTextTheme(base.textTheme),
+      primaryTextTheme: _buildShrineTextTheme(base.primaryTextTheme),
+      accentTextTheme: _buildShrineTextTheme(base.accentTextTheme),
+      primaryIconTheme: base.primaryIconTheme.copyWith(color: kShrineBrown900),
+      inputDecorationTheme: InputDecorationTheme(border: CutCornersBorder()));
+}
+
+TextTheme _buildShrineTextTheme(TextTheme base) {
+  return base
+      .copyWith(
+          headline: base.headline.copyWith(
+            fontWeight: FontWeight.w500,
+          ),
+          title: base.title.copyWith(fontSize: 18.0),
+          caption: base.caption
+              .copyWith(fontWeight: FontWeight.w400, fontSize: 14.0))
+      .apply(
+          fontFamily: 'Rubik',
+          displayColor: kShrineBrown900,
+          bodyColor: kShrineBrown900);
 }

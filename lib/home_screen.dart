@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_mcd/model/product.dart';
 import 'package:flutter_app_mcd/provider/product_provider.dart';
+import 'package:flutter_app_mcd/supplement/asymmetric_view.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -71,8 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
       Product product = item;
       return Card(
         clipBehavior: Clip.antiAlias,
+        elevation: 0,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             AspectRatio(
               aspectRatio: 18 / 11,
@@ -86,7 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Padding(
                 padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(product.name),
                     Text(formatter.format(product.price)),
@@ -103,44 +107,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildBody(BuildContext context) {
     List<Product> products = ProductsRepository.loadProducts(Category.all);
 
-    return GridView.count(
-        crossAxisCount: 2,
-        padding: EdgeInsets.all(16.0),
-        childAspectRatio: 7.0 / 9.0,
-        children: _buildGridCardsProvider(context));
-  }
-
-  List<Card> _buildGridCards(int count) {
-    List<Card> cards = List.generate(
-        count,
-        (int index) => Card(
-              clipBehavior: Clip.antiAlias,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  AspectRatio(
-                    aspectRatio: 18.0 / 11.0,
-                    child: Image.network(
-                      "https://i.pinimg.com/736x/2d/dc/25/2ddc25914e2ae0db5311ffa41781dda1.jpg",
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('Title $index'),
-                        SizedBox(
-                          height: 12.0,
-                        ),
-                        Text('Secondary Title'),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ));
-
-    return cards;
+    return Scrollbar(child: AsymmetricView(products: products,));
   }
 }
